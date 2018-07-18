@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 
 const users = require("./routes/api/users");
 const profile = require("./routes/api/profile");
@@ -22,6 +23,9 @@ mongoose
 app.get("/", (req, res) => {
   res.status(200).send("ehehehe");
 });
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use("/api/users", users);
 app.use("/api/profile", profile);

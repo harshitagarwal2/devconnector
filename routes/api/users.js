@@ -9,6 +9,8 @@ const passport = require("passport");
 
 const validateRegisterInput = require("../../validations/register");
 
+const validateLoginInput = require("../../validations/login");
+
 router.get("/test", (req, res) => {
   res.json({ msh: "fhsrbrbej" });
 });
@@ -55,11 +57,18 @@ router.post("/register", (req, res) => {
 });
 
 router.post("/login", (req, res) => {
+  const { errors, isValid } = validateLoginInput(req.body);
+
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
   const email = req.body.email;
   const password = req.body.password;
 
   User.findOne({ email }).then(user => {
     if (!user) {
+      errors.email = "User not Found";
       return res.status(404).json({ email: "Email not found" });
     }
     if (user) {
@@ -83,6 +92,7 @@ router.post("/login", (req, res) => {
             }
           );
         } else {
+          errors.password = "Password is incorrenct";
           return res.status(400).json({ password: "password incorrect" });
         }
       });
